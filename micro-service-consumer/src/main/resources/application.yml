@@ -1,0 +1,23 @@
+server:
+  port: 8002
+spring:
+  application:
+    name: micro-service-consumer
+eureka:
+  instance:
+    instance-id: micro-service-consumer
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://simon:simon@localhost:9001/eureka
+
+#ribbon:
+#  eager-load:
+#    enabled: true
+#ribbon:
+#  eureka:
+#    enabled: false
+
+#micro-service-consumer:
+#  ribbon:
+#  list-of-servers:

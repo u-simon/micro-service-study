@@ -1,0 +1,20 @@
+server:
+  port: 9001
+
+spring:
+  application:
+    name: micro-service-eureka
+  security:
+    user:
+      name: simon
+      password: simon
+
+
+eureka:
+  instance:
+    hostname: eureka9001.com
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://simon:sion@eureka9002.com:9002/eureka/,http://simon:simon@eureka9003.com:9003/eureka/

@@ -1,0 +1,16 @@
+server:
+  port: 8001
+spring:
+  application:
+    name: micro-service-provider
+
+eureka:
+  instance:
+    instance-id: micro-service-provider
+    prefer-ip-address: true
+    status-page-url: http://www.baidu.com
+    metadata-map:
+      xiaoyue: simon
+  client:
+    service-url:
+      defaultZone: http://simon:simon@eureka9003.com:9003/eureka/,http://simon:simon@eureka9001.com:9001/eureka/,http://simon:simon@eureka9002.com:9002/eureka/
