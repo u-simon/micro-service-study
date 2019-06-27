@@ -1,5 +1,8 @@
 package com.simon.microservice.consumer.controller;
 
+import com.netflix.hystrix.HystrixCommandProperties;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import com.simon.microservice.consumer.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
@@ -21,6 +24,7 @@ public class ConsumerController {
     private static final String PROVIDER_URL = "http://micro-service-provider";
 
     @RequestMapping("/callHello")
+    @HystrixCommand(fallbackMethod = "defaultCallHello", commandProperties = {@HystrixProperty(name = "execution.isolation.strategy", value = "SEMAPHORE")})
     public String callHello() {
         return restTemplate.getForObject(PROVIDER_URL + "/provider/hello", String.class);
     }
@@ -33,6 +37,10 @@ public class ConsumerController {
             return forEntity.getBody();
         }
         return null;
+    }
+
+    public String defaultCallHello(){
+        return "fail";
     }
 
     @GetMapping("/data/{name}")

@@ -14,24 +14,24 @@ public class MyHystrixCommand extends HystrixCommand<String> {
 	private final String name;
 
 	public MyHystrixCommand(String name) {
-		 super(HystrixCommandGroupKey.Factory.asKey("MyGroup"));
-        // super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("MyGroup"))
-        // .andCommandPropertiesDefaults(
-        // HystrixCommandProperties.Setter().withExecutionIsolationStrategy(
-        // HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE)));
-//        super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("MyGroup"))
-//                .andCommandPropertiesDefaults(
-//                        HystrixCommandProperties.Setter().withExecutionIsolationStrategy(
-//                                HystrixCommandProperties.ExecutionIsolationStrategy.THREAD))
-//                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()
-//                        .withCoreSize(10).withMaxQueueSize(100).withMaximumSize(100)));
+		super(HystrixCommandGroupKey.Factory.asKey("MyGroup"));
+		// super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("MyGroup"))
+		// .andCommandPropertiesDefaults(
+		// HystrixCommandProperties.Setter().withExecutionIsolationStrategy(
+		// HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE)));
+		// super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("MyGroup"))
+		// .andCommandPropertiesDefaults(
+		// HystrixCommandProperties.Setter().withExecutionIsolationStrategy(
+		// HystrixCommandProperties.ExecutionIsolationStrategy.THREAD))
+		// .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()
+		// .withCoreSize(10).withMaxQueueSize(100).withMaximumSize(100)));
 		this.name = name;
 	}
 
 	@Override
 	protected String run() throws Exception {
 		// Thread.sleep(1000000);
-        System.out.println("get data");
+		System.out.println("get data");
 		return this.name + " : " + Thread.currentThread().getName();
 	}
 
@@ -40,8 +40,8 @@ public class MyHystrixCommand extends HystrixCommand<String> {
 		return "failure";
 	}
 
-    @Override
-    protected String getCacheKey() {
-        return String.valueOf(this.name);
-    }
+	@Override
+	protected String getCacheKey() {
+		return String.valueOf(this.name);
+	}
 }

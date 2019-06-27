@@ -32,25 +32,25 @@ public class FeignConfig {
 //        return new BasicAuthenticationInterceptor("user", "password");
 //    }
 
-    @Bean
-    public FeignBasicAuthRequestInterceptor feignBasicAuthRequestInterceptor(){
-        return new FeignBasicAuthRequestInterceptor();
-    }
+//    @Bean
+//    public FeignBasicAuthRequestInterceptor feignBasicAuthRequestInterceptor(){
+//        return new FeignBasicAuthRequestInterceptor();
+//    }
 
-    @Bean
-    public Request.Options options(){
-        return new Request.Options(50000,50000);
-    }
-
-    @Bean
-    public Decoder decoder(){
-        return new Decoder.Default();
-    }
-
-    @Bean
-    public Encoder encoder(){
-        return new Encoder.Default();
-    }
+//    @Bean
+//    public Request.Options options(){
+//        return new Request.Options(50000,50000);
+//    }
+//
+//    @Bean
+//    public Decoder decoder(){
+//        return new Decoder.Default();
+//    }
+//
+//    @Bean
+//    public Encoder encoder(){
+//        return new Encoder.Default();
+//    }
 
 
 }
