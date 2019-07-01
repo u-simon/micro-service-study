@@ -1,5 +1,6 @@
 package com.simon.microservice.microserviceconsumerfeign.config;
 
+import feign.Feign;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,6 +10,7 @@ import feign.Logger;
 import feign.Request;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
+import org.springframework.context.annotation.Scope;
 
 /**
  * @author fengyue
@@ -21,6 +23,13 @@ public class FeignConfig {
     Logger.Level feignLoggerLevel(){
         return Logger.Level.FULL;
     }
+
+    //禁用Hystrix
+//    @Bean
+//    @Scope("prototype")
+//    public Feign.Builder feignBuilder(){
+//        return Feign.builder();
+//    }
 
 //    @Bean
 //    public Contract feignContract(){
