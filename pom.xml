@@ -23,6 +23,7 @@
         <module>micro-service-eureka-3</module>
         <module>micro-service-hystrix-dashboard</module>
         <module>micro-service-zuul</module>
+        <module>micro-service-admin</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>
