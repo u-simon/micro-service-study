@@ -22,7 +22,7 @@ import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
  */
 public class IpFilter extends ZuulFilter {
 
-    private Set<String> IpBlackList =  new HashSet<>();
+	private Set<String> IpBlackList = new HashSet<>();
 	{
 		IpBlackList.add("127.0.0.1");
 	}
@@ -48,7 +48,7 @@ public class IpFilter extends ZuulFilter {
 
 	@Override
 	public Object run() throws ZuulException {
-		System.out.println(2 / 0);
+//		System.out.println(2 / 0);
 		RequestContext currentContext = RequestContext.getCurrentContext();
 		HttpServletRequest request = currentContext.getRequest();
 		String ip = IPUtils.getRemoteHost(request);
