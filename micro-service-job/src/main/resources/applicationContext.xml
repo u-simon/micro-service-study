@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:reg="http://www.dangdang.com/schema/ddframe/reg"
+       xmlns:job="http://www.dangdang.com/schema/ddframe/job"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.dangdang.com/schema/ddframe/reg http://www.dangdang.com/schema/ddframe/reg/reg.xsd http://www.dangdang.com/schema/ddframe/job http://www.dangdang.com/schema/ddframe/job/job.xsd">
+
+    <!--
+        server-lists: 连接zookeeper服务器的列表，包括IP和端口号，多个地址用逗号分隔
+        namespace: zookeeper的命名空间
+        base-sleep-time-milliseconds: 等待重试的间隔时间的初始值 ms 默认1000
+        max-sleep-time-milliseconds: 等待重试的间隔时间的最大值
+        max-retries:最大重试次数 默认 3
+        session-timeout-milliseconds: 会话超时时间 60000
+        connection-timeout-milliseconds: 连接超时时间 15000
+        digest:连接zookeeper的权限令牌
+    -->
+    <reg:zookeeper id="regCenter" base-sleep-time-milliseconds="1000" max-retries="3" max-sleep-time-milliseconds="3000"
+                   server-lists="60.205.6.252:2181" namespace="dd-job"/>
+
+    <!--
+        class:作业实现类，需实现ElasticJob接口
+        job-ref:作业关联的beanId，该遏制优先级大于class属性配置
+        registry-center-ref:注册中心bean的引用，需引用reg:zookeeper的声明
+        cron:cron表达式，用于控制作业触发时间
+        sharding-total-count:作业分片总数
+        sharding-item-parameters:分片序列号和参数用等号分隔，多个键值对用逗号分隔，分片序号从0开始，不可大于或等于作业分片总数。如：0=a, 1=b, 2=c
+        job-instance-id:作业实例主键，同IP可运行实例主键不同但名称相同的多个作业实例
+        job-parameter:作业自定义参数，可通过传递改参数为作业调度的业务方法传参，用于实现带参数的作业
+    -->
+    <job:simple id="mySimpleJob" class="com.simon.microservice.job.task.MySimpleJob" sharding-item-parameters="0=0,1=1"
+                description="我的第一个简单作业" registry-center-ref="regCenter" cron="0/30 * * * * ?" sharding-total-count="2"
+                overwrite="true" job-exception-handler="com.simon.microservice.job.handler.CustomeJobExceptionHandler">
+        <job:listener class="com.simon.microservice.job.listener.MessageElasticJobListener"/>
+    </job:simple>
+
+    <!--这个任务执行一次就结束了，可以通过streaming-process="true"来开启流式作业,流式处理数据只有fetchData方法的返回值为null或者集合长度为
+    空时，作业才停止抓取，否则作业将一直运行下去，非流式处理数据则只会在每次作业执行过程中执行一次fetchData方法和processData方法，随即完成本次作业-->
+    <job:dataflow id="myDataflowJob" class="com.simon.microservice.job.task.MyDataflowJob"
+                  registry-center-ref="regCenter" cron="0 38 19 * * ?" sharding-total-count="1"
+                  sharding-item-parameters="" description="我的第一个数据流作业" streaming-process="false"/>
+</beans>
