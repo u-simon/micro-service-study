@@ -36,5 +36,4 @@ public class TransactionMessage {
 	private String customerSystem; // 消费系统
 
 	private Date dieDate;// 死亡时间
-
 }
