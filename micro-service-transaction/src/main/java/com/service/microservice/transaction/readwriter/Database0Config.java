@@ -1,8 +1,7 @@
-package com.service.microservice.transaction.config;
+package com.service.microservice.transaction.readwriter;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -13,7 +12,7 @@ import javax.sql.DataSource;
  * @Describe
  */
 @Data
-@ConfigurationProperties(prefix = "database0")
+//@ConfigurationProperties(prefix = "database0")
 @Component
 public class Database0Config {
     private String url;

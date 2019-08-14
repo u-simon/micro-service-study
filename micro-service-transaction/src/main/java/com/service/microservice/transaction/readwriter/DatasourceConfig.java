@@ -1,4 +1,4 @@
-package com.service.microservice.transaction.config;
+package com.service.microservice.transaction.readwriter;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -8,7 +8,6 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -20,7 +19,7 @@ import com.dangdang.ddframe.rdb.sharding.api.strategy.slave.MasterSlaveLoadBalan
  * @Date 2019-08-12 15:31
  * @Describe
  */
-@Configuration
+//@Configuration
 public class DatasourceConfig {
 
 	@Autowired

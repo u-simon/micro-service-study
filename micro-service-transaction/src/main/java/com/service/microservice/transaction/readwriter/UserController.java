@@ -1,8 +1,7 @@
-package com.service.microservice.transaction.config;
+package com.service.microservice.transaction.readwriter;
 
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -13,7 +12,7 @@ import java.util.Map;
  * @Date 2019-08-12 15:55
  * @Describe
  */
-@Controller
+//@Controller
 public class UserController {
 
     @Autowired

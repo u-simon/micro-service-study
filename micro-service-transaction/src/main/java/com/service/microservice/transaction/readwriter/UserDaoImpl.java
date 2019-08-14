@@ -1,4 +1,4 @@
-package com.service.microservice.transaction.config;
+package com.service.microservice.transaction.readwriter;
 
 import com.dangdang.ddframe.rdb.sharding.api.HintManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

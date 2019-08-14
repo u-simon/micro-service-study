@@ -1,4 +1,4 @@
-package com.service.microservice.transaction.config;
+package com.service.microservice.transaction.readwriter;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import lombok.Data;
