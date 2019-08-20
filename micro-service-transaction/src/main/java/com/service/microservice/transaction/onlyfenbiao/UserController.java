@@ -13,7 +13,7 @@ import java.util.Map;
  * @Date 2019-08-14 11:47
  * @Describe
  */
-@Controller
+//@Controller
 public class UserController {
 
     @Autowired

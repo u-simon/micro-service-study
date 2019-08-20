@@ -26,8 +26,8 @@ import com.google.common.collect.Maps;
  * @Date 2019-08-14 10:50
  * @Describe
  */
-@Component
-@Configuration
+//@Component
+//@Configuration
 public class DatasourceConfig {
 
 	@Value("${database0.url}")
@@ -41,7 +41,7 @@ public class DatasourceConfig {
 	@Value("${database0.databaseName}")
 	private String databaseName;
 
-	@Bean
+//	@Bean
 	public DataSource dataSource() throws SQLException {
 		return buildDatasource();
 
@@ -77,12 +77,12 @@ public class DatasourceConfig {
 		return dataSource;
 	}
 
-	@Bean
+//	@Bean
 	public NamedParameterJdbcTemplate namedParameterJdbcTemplate() throws SQLException {
 		return new NamedParameterJdbcTemplate(dataSource());
 	}
 
-	@Bean
+//	@Bean
 	public JdbcTemplate jdbcTemplate() throws SQLException {
 		return new JdbcTemplate(dataSource());
 	}
