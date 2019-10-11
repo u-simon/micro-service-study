@@ -2,6 +2,7 @@ package com.microservice.microservicehttpclient.test;
 
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -135,7 +136,7 @@ public class HttpClientPostTest {
         if (response.getStatusLine().getStatusCode() == 200) {
             HttpEntity entity = response.getEntity();
             if (entity != null) {
-                System.out.println(EntityUtils.toString(entity, "UTF-8"));
+                System.out.println(EntityUtils.toString(entity, StandardCharsets.UTF_8));
             }
         }
         response.close();
