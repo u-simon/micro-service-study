@@ -1,5 +1,6 @@
 package com.microservice.microservicehttpclient.test;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -15,7 +16,11 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -113,9 +118,10 @@ public class HttpClientPostTest {
 				System.out.println(EntityUtils.toString(entity, "UTF-8"));
 			}
 		}
+		
+//		MultipartEntityBuilder.create().addPart("", new FileBody(new File(""))).addPart("1", new StringBody("", ContentType.APPLICATION_JSON)).build()
 		response.close();
 		httpClient.close();
-
 
 		// POST 请求 对象参数+普通参数
 
