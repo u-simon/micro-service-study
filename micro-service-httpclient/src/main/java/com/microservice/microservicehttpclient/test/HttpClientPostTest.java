@@ -187,8 +187,6 @@ public class HttpClientPostTest {
 		httpClient.close();
 
 		// Post请求 上传文件+对象参数
-
-		// Post请求 上传文件+普通参数
 		httpClient = HttpClientBuilder.create().build();
 		httpPost = new HttpPost("http://localhost:12345/user/testUploadParam");
 		httpPost.setEntity(MultipartEntityBuilder.create()
