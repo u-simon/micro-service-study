@@ -187,13 +187,15 @@ public class HttpClientPostTest {
 		httpClient.close();
 
 		// Post请求 上传文件+对象参数
-		httpClient = HttpClientBuilder.create().build();
+		// HttpClients.createDefault() 和HttpClientBuilder.create().build()等价
+		httpClient = HttpClients.createDefault();
 		httpPost = new HttpPost("http://localhost:12345/user/testUploadParam");
 		httpPost.setEntity(MultipartEntityBuilder.create()
 				.addPart("file",
 						new FileBody(
 								new File("/Users/xiaoyue/Documents/asset/fAzOQxyaWwLPxudf.jpg")))
-				.addPart("token", new StringBody(JSON.toJSONString(user), ContentType.APPLICATION_JSON))
+				.addPart("token",
+						new StringBody(JSON.toJSONString(user), ContentType.APPLICATION_JSON))
 				.build());
 		response = httpClient.execute(httpPost);
 		if (response.getStatusLine().getStatusCode() == 200) {
