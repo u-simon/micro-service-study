@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,7 +84,7 @@ public class UserController {
 
 	@RequestMapping("/testUploadObject")
 	public Map<String, Object> testUploadObject(@RequestParam("file") MultipartFile file,
-			@RequestBody User user) {
+			 User user) throws IOException {
 		Map<String, Object> response = new HashMap<>(2);
 		response.put("result", file.getOriginalFilename());
 		response.put("user", JSON.toJSONString(user));

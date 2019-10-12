@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 import com.microservice.microservicehttpclient.bean.User;
+import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -18,6 +19,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.FormBodyPart;
+import org.apache.http.entity.mime.FormBodyPartBuilder;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
@@ -186,16 +189,20 @@ public class HttpClientPostTest {
 		response.close();
 		httpClient.close();
 
-		// Post请求 上传文件+对象参数
+		// Post请求 上传文件Form表单提交
 		// HttpClients.createDefault() 和HttpClientBuilder.create().build()等价
 		httpClient = HttpClients.createDefault();
-		httpPost = new HttpPost("http://localhost:12345/user/testUploadParam");
+		httpPost = new HttpPost("http://localhost:12345/user/testUploadObject");
 		httpPost.setEntity(MultipartEntityBuilder.create()
+				.addPart("name",
+						new StringBody("simon", ContentType.create("text/plain", Consts.UTF_8)))
+				.addPart("gender",
+						new StringBody("男", ContentType.create("text/plain", Consts.UTF_8)))
+				.addPart("age",
+						new StringBody("23", ContentType.create("text/plain", Consts.UTF_8)))
 				.addPart("file",
 						new FileBody(
 								new File("/Users/xiaoyue/Documents/asset/fAzOQxyaWwLPxudf.jpg")))
-				.addPart("token",
-						new StringBody(JSON.toJSONString(user), ContentType.APPLICATION_JSON))
 				.build());
 		response = httpClient.execute(httpPost);
 		if (response.getStatusLine().getStatusCode() == 200) {
