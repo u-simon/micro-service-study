@@ -118,8 +118,9 @@ public class HttpClientPostTest {
 				System.out.println(EntityUtils.toString(entity, "UTF-8"));
 			}
 		}
-		
-//		MultipartEntityBuilder.create().addPart("", new FileBody(new File(""))).addPart("1", new StringBody("", ContentType.APPLICATION_JSON)).build()
+
+		// MultipartEntityBuilder.create().addPart("", new FileBody(new File(""))).addPart("1", new
+		// StringBody("", ContentType.APPLICATION_JSON)).build()
 		response.close();
 		httpClient.close();
 
@@ -138,14 +139,73 @@ public class HttpClientPostTest {
 
 		httpPost.setEntity(stringEntity);
 		httpPost.setHeader("Content-type", "application/json; charset=utf-8");
-        response = httpClient.execute(httpPost);
-        if (response.getStatusLine().getStatusCode() == 200) {
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                System.out.println(EntityUtils.toString(entity, StandardCharsets.UTF_8));
-            }
-        }
-        response.close();
-        httpClient.close();
+		response = httpClient.execute(httpPost);
+		if (response.getStatusLine().getStatusCode() == 200) {
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				System.out.println(EntityUtils.toString(entity, StandardCharsets.UTF_8));
+			}
+		}
+		response.close();
+		httpClient.close();
+
+
+		// Post请求 上传文件
+		httpClient = HttpClientBuilder.create().build();
+		httpPost = new HttpPost("http://localhost:12345/user/testUpload");
+		httpPost.setEntity(MultipartEntityBuilder.create()
+				.addPart("file",
+						new FileBody(
+								new File("/Users/xiaoyue/Documents/asset/fAzOQxyaWwLPxudf.jpg")))
+				.build());
+		response = httpClient.execute(httpPost);
+		if (response.getStatusLine().getStatusCode() == 200) {
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				System.out.println(EntityUtils.toString(entity, StandardCharsets.UTF_8));
+			}
+		}
+		response.close();
+		httpClient.close();
+
+		// Post请求 上传文件+普通参数
+		httpClient = HttpClientBuilder.create().build();
+		httpPost = new HttpPost("http://localhost:12345/user/testUploadParam");
+		httpPost.setEntity(MultipartEntityBuilder.create()
+				.addPart("file",
+						new FileBody(
+								new File("/Users/xiaoyue/Documents/asset/fAzOQxyaWwLPxudf.jpg")))
+				.addPart("token", new StringBody("1234234", ContentType.TEXT_PLAIN)).build());
+		response = httpClient.execute(httpPost);
+		if (response.getStatusLine().getStatusCode() == 200) {
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				System.out.println(EntityUtils.toString(entity, StandardCharsets.UTF_8));
+			}
+		}
+		response.close();
+		httpClient.close();
+
+		// Post请求 上传文件+对象参数
+
+		// Post请求 上传文件+普通参数
+		httpClient = HttpClientBuilder.create().build();
+		httpPost = new HttpPost("http://localhost:12345/user/testUploadParam");
+		httpPost.setEntity(MultipartEntityBuilder.create()
+				.addPart("file",
+						new FileBody(
+								new File("/Users/xiaoyue/Documents/asset/fAzOQxyaWwLPxudf.jpg")))
+				.addPart("token", new StringBody(JSON.toJSONString(user), ContentType.APPLICATION_JSON))
+				.build());
+		response = httpClient.execute(httpPost);
+		if (response.getStatusLine().getStatusCode() == 200) {
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				System.out.println(EntityUtils.toString(entity, StandardCharsets.UTF_8));
+			}
+		}
+		response.close();
+		httpClient.close();
+
 	}
 }

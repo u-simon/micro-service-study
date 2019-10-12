@@ -1,8 +1,10 @@
 package com.microservice.microservicehttpclient.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.microservice.microservicehttpclient.bean.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,4 +64,29 @@ public class UserController {
 		return response;
 	}
 
+
+	@RequestMapping("/testUpload")
+	public Map<String, Object> testUpload(@RequestParam("file") MultipartFile file) {
+		Map<String, Object> response = new HashMap<>(1);
+		response.put("result", file.getOriginalFilename());
+		return response;
+	}
+
+	@RequestMapping("/testUploadParam")
+	public Map<String, Object> testUploadParam(@RequestParam("file") MultipartFile file,
+			String token) {
+		Map<String, Object> response = new HashMap<>(2);
+		response.put("result", file.getOriginalFilename());
+		response.put("token", token);
+		return response;
+	}
+
+	@RequestMapping("/testUploadObject")
+	public Map<String, Object> testUploadObject(@RequestParam("file") MultipartFile file,
+			@RequestBody User user) {
+		Map<String, Object> response = new HashMap<>(2);
+		response.put("result", file.getOriginalFilename());
+		response.put("user", JSON.toJSONString(user));
+		return response;
+	}
 }
