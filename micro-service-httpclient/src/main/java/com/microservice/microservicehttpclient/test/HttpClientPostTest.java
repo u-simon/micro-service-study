@@ -1,6 +1,7 @@
 package com.microservice.microservicehttpclient.test;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +16,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
@@ -213,6 +215,15 @@ public class HttpClientPostTest {
 		}
 		response.close();
 		httpClient.close();
+	}
 
+	public static CloseableHttpResponse execute(CloseableHttpClient httpClient, Object param)
+			throws IOException {
+		if (param instanceof HttpPost) {
+			return httpClient.execute((HttpPost) param);
+		} else if (param instanceof HttpGet) {
+			return httpClient.execute((HttpGet) param);
+		}
+		return null;
 	}
 }
