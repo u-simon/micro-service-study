@@ -23,6 +23,11 @@ public class ExistNode {
      *      watch : 指定是否复用Zookeeper中默认的Watcher
      *      cb : 注册一个异步回调函数
      *      ctx : 用于传递上下文信息的对象
+     *
+     * 结论:
+     *  1.无论指定节点是否存在,通过exists接口都可以注册Watcher
+     *  2.exists接口中注册的Watcher,能够对节点创建、节点删除和节点数据更新事件进行监听
+     *  3.对于指定节点的子节点的各种变化,都不会通知客户端
      */
     static ZooKeeper zooKeeper;
     public static void main(String[] args) throws Exception {
@@ -56,11 +61,13 @@ public class ExistNode {
 
         zooKeeper.exists(Constant.PATH, true);
 
-        zooKeeper.create(Constant.PATH, "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+        zooKeeper.create(Constant.PATH, "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 
         zooKeeper.setData(Constant.PATH, "456".getBytes(),-1);
 
         zooKeeper.delete(Constant.PATH, -1);
+
+        zooKeeper.create(Constant.PATH + "/simons", "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 
         Thread.sleep(Integer.MAX_VALUE);
     }
