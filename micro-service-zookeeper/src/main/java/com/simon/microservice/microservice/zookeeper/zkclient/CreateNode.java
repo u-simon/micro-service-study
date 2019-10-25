@@ -26,6 +26,9 @@ public class CreateNode {
      *                  4) 临时顺序(ephemeral_sequential)
      *  -- cb 注册一个异步回调函数,当服务端节点创建完毕后,Zookeeper客户端就会自动调用这个方法这样就可以处理相关的业务逻辑了
      *  -- ctx 用于传递一个对象,可以在回调方法执行的时候使用,通常是放一个上下文(Context)信息
+     *
+     *  注意 :
+     *      不支持递归创建
      */
 
     public static void main(String[] args) throws Exception {
@@ -41,10 +44,10 @@ public class CreateNode {
         countDownLatch.await();
         // sync create
         String path1 = zooKeeper
-                .create("/zk-test-ephemeral-", "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+                .create("/zk-test-ephemeral-", "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         System.out.println("success create ephemeral zNode : " + path1);
         String path2 = zooKeeper
-                .create("/zk-test-ephemeral-sequential-", "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+                .create("/zk-test-ephemeral-/sequential-", "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 
         System.out.println("success create ephemeral sequential znode : " + path2);
 
