@@ -29,6 +29,7 @@ public class CreateNode {
      *
      *  注意 :
      *      不支持递归创建
+     *      临时节点不支持创建子节点
      */
 
     public static void main(String[] args) throws Exception {

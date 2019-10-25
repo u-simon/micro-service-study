@@ -1,9 +1,6 @@
 package com.simon.microservice.microservice.zookeeper.zkclient;
 
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.*;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -40,6 +37,17 @@ public class DeleteNode {
             }
         });
         countDownLatch.await();
-        zooKeeper.delete("/simon", 0);
+        //sync
+        zooKeeper.delete("/simon/simons", 0);
+
+        //async
+        zooKeeper.delete("/simon", 0, new AsyncCallback.VoidCallback(){
+            @Override
+            public void processResult(int rc, String path, Object ctx) {
+                System.out.println("success async delete znode " + path + " --- > " + rc + "--->" + ctx.toString());
+            }
+        }, "async");
+
+        Thread.sleep(Integer.MAX_VALUE);
     }
 }
