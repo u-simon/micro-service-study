@@ -8,4 +8,6 @@ package com.simon.microservice.microservice.zookeeper.zkclient;
 public class Constant {
 
     public static final String ZOOKEEPER_CONNECTION_ADDRESS = "127.0.0.1:2181";
+
+    public static final String PATH = "/simon";
 }
