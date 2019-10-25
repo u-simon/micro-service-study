@@ -58,7 +58,7 @@ public class ExistNode {
 
         zooKeeper.create(Constant.PATH, "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 
-        zooKeeper.setData(Constant.PATH,"456".getBytes(),-1);
+        zooKeeper.setData(Constant.PATH, "456".getBytes(),-1);
 
         zooKeeper.delete(Constant.PATH, -1);
 
