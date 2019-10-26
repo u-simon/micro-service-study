@@ -1,6 +1,5 @@
-package com.simon.microservice.microservice.zookeeper.zkclient;
+package com.simon.microservice.microservice.zookeeper.api;
 
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.zookeeper.*;

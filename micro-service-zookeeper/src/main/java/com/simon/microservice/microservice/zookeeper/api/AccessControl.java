@@ -1,4 +1,4 @@
-package com.simon.microservice.microservice.zookeeper.zkclient;
+package com.simon.microservice.microservice.zookeeper.api;
 
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.Watcher;
