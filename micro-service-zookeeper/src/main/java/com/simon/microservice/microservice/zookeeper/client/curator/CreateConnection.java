@@ -25,17 +25,24 @@ public class CreateConnection {
         CuratorFramework curatorFramework1 = CuratorFrameworkFactory.newClient(Constant.ZOOKEEPER_CONNECTION_ADDRESS,
                 5000, 3000, new ExponentialBackoffRetry(1000, 3));
 
+        // 启动会话
         curatorFramework.start();
 
         //fluent风格(就是build模式)
         CuratorFramework build = CuratorFrameworkFactory.builder().connectString(Constant.ZOOKEEPER_CONNECTION_ADDRESS).sessionTimeoutMs(5000)
                 .retryPolicy(new ExponentialBackoffRetry(1000, 3)).build();
+
         build.start();
 
 
-        //创建包含隔离命名空间的会话(即根路径
-        CuratorFramework base = CuratorFrameworkFactory.builder().connectString(Constant.ZOOKEEPER_CONNECTION_ADDRESS).sessionTimeoutMs(5000)
-                .retryPolicy(new ExponentialBackoffRetry(1000, 3)).namespace("base").build();
+        //创建包含隔离命名空间的会话(即根路径)
+        CuratorFramework base = CuratorFrameworkFactory.builder()
+                .connectString(Constant.ZOOKEEPER_CONNECTION_ADDRESS)
+                .sessionTimeoutMs(5000)
+                .retryPolicy(new ExponentialBackoffRetry(1000, 3))
+                .namespace("base")
+                .build();
+
         base.start();
 
 
