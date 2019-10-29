@@ -28,7 +28,6 @@ public class DistributeLock {
 		InterProcessMutex interProcessMutex = new InterProcessMutex(build, Constant.PATH);
 
 		CountDownLatch countDownLatch = new CountDownLatch(1);
-
 		for (int i = 0; i < 30; i++) {
 			new Thread(() -> {
 				try {
@@ -37,27 +36,25 @@ public class DistributeLock {
 				} catch (Exception e) {
 				}
 
-                System.out.println("order number : " + new SimpleDateFormat("HH:mm:ss:SSS").format(new Date()));
+				System.out.println("order number : "
+						+ new SimpleDateFormat("HH:mm:ss:SSS").format(new Date()));
 
-                try {
-                    interProcessMutex.release();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }).start();
+				try {
+					interProcessMutex.release();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}).start();
 		}
-
 		countDownLatch.countDown();
 
+		// 分布式计数器
+		String distatomicint = "/distatomicint_path";
+		DistributedAtomicInteger atomicInteger =
+				new DistributedAtomicInteger(build, distatomicint, new RetryNTimes(3, 1000));
+		AtomicValue<Integer> add = atomicInteger.add(8);
+		System.out.println("result : " + add.succeeded());
 
-
-		//分布式计数器
-        String distatomicint = "/distatomicint_path";
-        DistributedAtomicInteger atomicInteger = new DistributedAtomicInteger(build, distatomicint, new RetryNTimes(3, 1000));
-        AtomicValue<Integer> add = atomicInteger.add(8);
-        System.out.println("result : " + add.succeeded());
-
-
-        //分布式barrier
-    }
+		// 分布式barrier
+	}
 }
