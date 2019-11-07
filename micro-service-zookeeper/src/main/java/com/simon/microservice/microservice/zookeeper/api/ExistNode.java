@@ -65,6 +65,7 @@ public class ExistNode {
 
         zooKeeper.setData(Constant.PATH, "456".getBytes(),-1);
 
+        // version : -1表示不尽兴版本比对
         zooKeeper.delete(Constant.PATH, -1);
 
         zooKeeper.create(Constant.PATH + "/simons", "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
