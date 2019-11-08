@@ -36,6 +36,10 @@ public class ExistNode {
             @Override
             public void process(WatchedEvent event) {
                 try {
+                    /**
+                     * keeperState 通知状态
+                     * EventType 事件类型
+                     */
                     if (Event.KeeperState.SyncConnected == event.getState()){
                         if (event.getType() == Event.EventType.None && event.getPath() == null){
                             countDownLatch.countDown();
