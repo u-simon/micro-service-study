@@ -25,6 +25,7 @@
         <module>micro-service-zuul</module>
         <module>micro-service-admin</module>
         <module>micro-service-transaction</module>
+        <module>micro-service-gateway</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>
