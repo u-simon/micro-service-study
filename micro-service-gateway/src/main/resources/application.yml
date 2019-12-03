@@ -4,19 +4,22 @@ spring:
       routes:
         #各种 Predicates 同时存在于同一个路由时，请求必须同时满足所有的条件才被这个路由匹配
         - id: host_foo_path_headers_to_httpbin
-            uri: http://ityouknow.com
-            #会给每个匹配的请求添加上foo=bar的参数和值
-            filters:
-              - AddRequestParameter=foo, bar
-            predicates:
-              - Host=**.foo.org
-              - Path=/headers
-              - Method=GET
-              - Header=X-Request-Id, \d+
-              - Query=foo, ba.
-              - Query=baz
-              - Cookie=chocolate, ch.p
-              - After=2018-01-20T06:06:06+08:00[Asia/Shanghai]
+          order: 0
+          uri: lb://CONSUMER #负载均衡 consumer的服务
+          #会给每个匹配的请求添加上foo=bar的参数和值
+          filters:
+            - AddRequestParameter=foo, bar
+            - StripPrefix=1
+            - AddResponseHeader=X-Response-Default-Foo, Default-Bar
+          predicates:
+            - Host=**.foo.org
+            - Path=/headers
+            - Method=GET
+            - Header=X-Request-Id, \d+
+            - Query=foo, ba.
+            - Query=baz
+            - Cookie=chocolate, ch.p
+            - After=2018-01-20T06:06:06+08:00[Asia/Shanghai]
         #采用两个参数组和权重。权重是按组计算的,这条路线会将约80％的流量转发至weighthigh.org，并将约20％的流量转发至weightlow.org
         #        - id: weight_route
         #          uri: http://weightheigh.com
@@ -111,6 +114,8 @@ spring:
       discovery:
         locator:
           enabled: true
+      default-filters:
+        - Elapsed=true
 
 
 server:
