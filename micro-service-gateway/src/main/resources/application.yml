@@ -5,6 +5,9 @@ spring:
         #各种 Predicates 同时存在于同一个路由时，请求必须同时满足所有的条件才被这个路由匹配
         - id: host_foo_path_headers_to_httpbin
             uri: http://ityouknow.com
+            #会给每个匹配的请求添加上foo=bar的参数和值
+            filters:
+              - AddRequestParameter=foo, bar
             predicates:
               - Host=**.foo.org
               - Path=/headers
@@ -15,7 +18,7 @@ spring:
               - Cookie=chocolate, ch.p
               - After=2018-01-20T06:06:06+08:00[Asia/Shanghai]
         #采用两个参数组和权重。权重是按组计算的,这条路线会将约80％的流量转发至weighthigh.org，并将约20％的流量转发至weightlow.org
-        #        - id: weight_heigh
+        #        - id: weight_route
         #          uri: http://weightheigh.com
         #          predicates:
         #            - Weight=group1, 8
@@ -108,6 +111,8 @@ spring:
       discovery:
         locator:
           enabled: true
+
+
 server:
   port: 8080
 logging:
