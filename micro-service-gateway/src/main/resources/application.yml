@@ -11,6 +11,22 @@ spring:
             - AddRequestParameter=foo, bar
             - StripPrefix=1
             - AddResponseHeader=X-Response-Default-Foo, Default-Bar
+            #熔断
+            - name: Hystrix
+              args:
+                #HystrixCommand的名字
+                name: fallbackcmd
+                #即 fallback 对应的 uri,这里的 uri 仅支持 forward: schemed 的
+                fallbackUri: forward:/fallback
+            #限流
+            - name: RequestRateLimiter
+              args:
+                #用于限流的键的解析器的Bean对象名字
+                key-resolver: '#{remoteAddrKeyResolver}'
+                #令牌桶每秒填充平均速率
+                redis-rate-limiter.replenishRate: 1
+                #令牌桶容量
+                redis-rate-limiter.burstCapacity: 5
           predicates:
             - Host=**.foo.org
             - Path=/headers
@@ -116,6 +132,11 @@ spring:
           enabled: true
       default-filters:
         - Elapsed=true
+      enabled: false
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
 
 
 server:
@@ -123,3 +144,10 @@ server:
 logging:
   level:
     org.springframework.cloud.gateway: debug
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: *

@@ -41,6 +41,7 @@ public class ElapsedGatewayFilterFactory
 			@Override
 			public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 				exchange.getAttributes().put(ELAPSED_TIME_BEGIN, System.currentTimeMillis());
+
 				return chain.filter(exchange).then(Mono.fromRunnable(() -> {
 					Long startTime = exchange.getAttribute(ELAPSED_TIME_BEGIN);
 					if (startTime != null) {
