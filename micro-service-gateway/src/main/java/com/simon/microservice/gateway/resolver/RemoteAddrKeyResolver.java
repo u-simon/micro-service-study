@@ -1,6 +1,7 @@
 package com.simon.microservice.gateway.resolver;
 
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -10,9 +11,14 @@ import reactor.core.publisher.Mono;
  * @Describe 一念花开, 一念花落
  */
 public class RemoteAddrKeyResolver implements KeyResolver {
-    public static final String BEAN_NAME = "remoteAddrKeyResolver";
-    @Override
-    public Mono<String> resolve(ServerWebExchange exchange) {
-        return Mono.just(exchange.getRequest().getRemoteAddress().getAddress().getHostAddress());
-    }
+	public static final String BEAN_NAME = "remoteAddrKeyResolver";
+
+	@Override
+	public Mono<String> resolve(ServerWebExchange exchange) {
+		// 根据某个查询参数(例如: userId)来限制
+		// MultiValueMap<String, String> queryParams =
+		// exchange.getRequest().getQueryParams();
+		// Mono.just(queryParams.get(""));
+		return Mono.just(exchange.getRequest().getRemoteAddress().getAddress().getHostAddress());
+	}
 }

@@ -7,26 +7,6 @@ spring:
           order: 0
           uri: lb://CONSUMER #负载均衡 consumer的服务
           #会给每个匹配的请求添加上foo=bar的参数和值
-          filters:
-            - AddRequestParameter=foo, bar
-            - StripPrefix=1
-            - AddResponseHeader=X-Response-Default-Foo, Default-Bar
-            #熔断
-            - name: Hystrix
-              args:
-                #HystrixCommand的名字
-                name: fallbackcmd
-                #即 fallback 对应的 uri,这里的 uri 仅支持 forward: schemed 的
-                fallbackUri: forward:/fallback
-            #限流
-            - name: RequestRateLimiter
-              args:
-                #用于限流的键的解析器的Bean对象名字
-                key-resolver: '#{remoteAddrKeyResolver}'
-                #令牌桶每秒填充平均速率
-                redis-rate-limiter.replenishRate: 1
-                #令牌桶容量
-                redis-rate-limiter.burstCapacity: 5
           predicates:
             - Host=**.foo.org
             - Path=/headers
@@ -36,93 +16,202 @@ spring:
             - Query=baz
             - Cookie=chocolate, ch.p
             - After=2018-01-20T06:06:06+08:00[Asia/Shanghai]
+          filters:
+            - AddRequestParameter=foo, bar
+            - StripPrefix=1
+            - AddResponseHeader=X-Response-Default-Foo, Default-Bar
+            #熔断
+            - name: Hystrix
+              args:
+                #HystrixCommand的名字
+                name: fetchIngredients
+                #即 fallback 对应的 uri,这里的 uri 仅支持 forward: schemed 的
+                fallbackUri: forward:/fallback
+            - RewritePath=/consimingServiceEndpoint, /backingServiceEndpoint
+            #限流
+            - name: RequestRateLimiter
+              args:
+                #用于限流的键的解析器的Bean对象名字 remoteAddrKeyResolver 是 KeyResolver 接口的实现类.在配置中，按名称使用SpEL引用bean。
+                # #{@remoteAddrKeyResolver} 是引用名为'remoteAddrKeyResolver'的bean的SpEL表达式
+                key-resolver: '#{remoteAddrKeyResolver}'
+                #令牌桶每秒填充平均速率
+                redis-rate-limiter.replenishRate: 10
+                #令牌桶容量
+                redis-rate-limiter.burstCapacity: 20
+                rate-limiter: '#{自定义的rateLimiterGatewayFilter}'
+            #该过滤器有一个status 和一个url参数。status是300类重定向HTTP代码，如301。该URL应为有效的URL，这将是Location header的值
+            #这将发送一个302状态码和一个Location:http://acme.org header来执行重定向
+            - RedirectTo=302, https://www.baidu.com
+            #这将X-Request-Foo Header被发送到下游之前删除它
+            - RemoveRequestHeader=X-Request-Foo
+            #这将在返回到网关client之前从响应中删除X-Request-Foo
+            - RemoveResponseHeader=X-Request-Foo
+            #包含一个 regexp正则表达式参数和一个 replacement 参数. 通过使用Java正则表达式灵活地重写请求路径
+            # 对于请求路径/foo/bar，将在发出下游请求之前将路径设置为/bar。注意,由于YAML规范，请使用 $\替换 $
+            - RewritePath=/foo/(?<segment>.*), /$\{segment}
+            #包含 name, regexp和 replacement 参数.。通过使用Java正则表达式灵活地重写响应头的值
+            - RewriteResponseHeader=X-Response-Foo,,password=[^&]+, password=***
+            #将调用转发到下游之前强制执行WebSession::save操作
+            - SaveSession
+
+        - id: myRoute
+          uri: lb://service
+          predicates:
+            - Path=/service/**
+
+        #当请求大小大于允许的限制时，RequestSize GatewayFilter Factory可以限制请求不到达下游服务。过滤器以RequestSize作为参数，这是定义请求的允许大小限制(以字节为单位)
+        # 如果未在路由定义中作为filter参数提供，则默认请求大小将设置为5 MB
+        - id: request-size-route
+          uri: http://localhost:8080/upload
+          predicates:
+            - Path=/upload
+          filters:
+            - name: RequestSize
+              args:
+                maxSize: 500000
+
+        #当通过网关发出/name/bar/foo请求时，向nameservice发出的请求将是http://nameservice/foo
+        - id: stripPrefix-route
+          uri: http://nameservice
+          predicates:
+            - Path=/name/**
+          filters:
+            - StripPrefix=2
+
+        #SetStatus GatewayFilter Factory 包括唯一的 status参数.必须是一个可用的Spring HttpStatus。它可以是整数值404或字符串枚举NOT_FOUND
+        - id: setStatusString-route
+          uri: http://www.baidu.com
+          filters:
+            - SetStatus=BAD_REQUEST
+        - id: setStatusInt-route
+          uri: http://www.baidu.com
+          filters:
+            - SetStatus=401
+
+        #此GatewayFilter使用给定的名称替换所有header，而不是添加。因此，如果下游服务器响应为X-Response-Foo:1234，则会将其替换为X-Response-Foo:Bar,这是网关客户端将接收的内容
+        - id: setResponseHeader_route
+          uri: http://www.baidu.com
+          filters:
+            - SetResponseHeader=X-Request-Foo, bar
+
+        #采用 template路径参数。它提供了一种通过允许路径的模板化segments来操作请求路径的简单方法
+        #对于一个 /foo/bar请求，在做下游请求前，路径将被设置为/bar
+        - id: setPath_route
+          uri: http://www.baidu.com
+          predicates:
+            - Path=/foo/{segment}
+          filters:
+            - SetPath=/{segment}
+
+        # FallbackHeaders允许在转发到外部应用程序中的FallbackUri的请求的header中添加Hystrix异常详细信息
+        # FallbackHeadersGatewayFilterFactory
+        - id: ingredients-fallback
+            uri: http://localhost:9994
+            predicates:
+              - Path=/fallback
+            filters:
+              - name: FallbackHeaders
+                args:
+                  executionExceptionTypeHeaderName: Test-Header
+        #给所有匹配的Path添加前缀/myPath
+        - id: prefix-path
+          uri: http://www.baidu.com
+          filters:
+            - PrefixPath=/myPath
+
+        #不使用由HTTP客户端确定的host Header,而是发送原始host header
+        - id: preserve_host_route
+          uri: http://www.baidu.com
+          filters:
+            - PreseverHostHeader
+
         #采用两个参数组和权重。权重是按组计算的,这条路线会将约80％的流量转发至weighthigh.org，并将约20％的流量转发至weightlow.org
-        #        - id: weight_route
-        #          uri: http://weightheigh.com
-        #          predicates:
-        #            - Weight=group1, 8
-        #        - id: weight_low
-        #          uri: https://weightlow.com
-        #          predicates:
-        #            - Weight=group1, 2
+        - id: weight_route
+          uri: http://weightheigh.com
+          predicates:
+            - Weight=group1, 8
+        - id: weight_low
+          uri: https://weightlow.com
+          predicates:
+            - Weight=group1, 2
 
         #通过请求ip地址匹配
         #采用CIDR标记（IPv4或IPv6）字符串的列表（最小大小为1），例如192.168.0.1/16（其中192.168.0.1IP地址和16子网掩码）
         #如果请求的远程地址为，则此路由将匹配192.168.1.10
-        #        - id: remoteAddr_route
-        #          uri: https://www.baidu.com
-        #          predicates:
-        #            - RemoteAddr=192.168.1.1/24
+        - id: remoteAddr_route
+          uri: https://www.baidu.com
+          predicates:
+            - RemoteAddr=192.168.1.1/24
 
         #通过请求参数匹配
         #两个参数：required param和optional regexp,如果请求包含一个foo查询参数，其值与ba.regexp 匹配，则此路由将匹配，bar和baz将匹配
         #curl http://localhost:8080?foo=bar
-        #        - id: query_route
-        #          uri: https://www.baidu.com
-        #          predicates:
-        #            - Query=foo,ba.
+        - id: query_route
+          uri: https://www.baidu.com
+          predicates:
+            - Query=foo,ba.
 
         #通过请求路径匹配
         #具有两个参数：弹簧PathMatcher模式列表和的可选标志matchOptionalTrailingSeparator
-        #        - id: path_route
-        #          uri: https://www.baidu.com
-        #          predicates:
-        #            - Path=/foo/{segment}, /bar/{segment}
+        - id: path_route
+          uri: https://www.baidu.com
+          predicates:
+            - Path=/foo/{segment}, /bar/{segment}
 
         #通过请求方式匹配
         #使用一个参数：要匹配的HTTP方法,如果request方法是，则此路由将匹配GET
         #curl -X POST http://localhost:8080 404 curl http://localhost:8080 正常访问
-        #        - id: method_route
-        #          uri: https://www.baidu.com
-        #          predicates:
-        #            - Method=GET
+        - id: method_route
+          uri: https://www.baidu.com
+          predicates:
+            - Method=GET
 
         #通过Host匹配
         #Host Route Predicate Factory 采用一个参数：主机名模式列表。该模式是带有.作为分隔符的Ant样式的模式。谓词与Host匹配模式的标头匹配
         #还支持URI模板变量{sub}.myhost.org,如果请求的Host标头中包含值www.somehost.orgor beta.somehost.org或，则此路由将匹配www.anotherhost.org
         # curl http://localhost:8080 -H 'Host: asd.somehost.org' curl http://localhost:8080 -H 'Host: www.somehost.org'
-        #        - id: host_route
-        #          uri: https://www.baidu.com
-        #          predicates:
-        #            - Host=**.somehost.org
+        - id: host_route
+          uri: https://www.baidu.com
+          predicates:
+            - Host=**.somehost.org
 
         #通过Header匹配
         #Header Route Predicate Factory采用两个参数，标头名称和正则表达式。该谓词与具有给定名称的标头匹配，并且值与正则表达式匹配
         #如果请求具有名为X-Request-Id其值与\d+正则表达式匹配（具有一个或多个数字的值）的标头，则此路由匹配
         # curl http://localhost:8080 -H "X-Request-Id:123123" \d+ 表示数字
-        #        - id: header_route
-        #          uri: https://www.baidu.com
-        #          predicates:
-        #            - Header=X-Request-Id, \d+
+        - id: header_route
+          uri: https://www.baidu.com
+          predicates:
+            - Header=X-Request-Id, \d+
 
         #通过cookie匹配
         #Cookie Route Predicate 可以接收两个参数，一个是 Cookie name ,一个是正则表达式，路由规则会通过获取对应的
         #Cookie name 值和正则表达式去匹配，如果匹配上就会执行路由，如果没有匹配上则不执行,
         #curl http://localhost:8080 --cookie 'chocolcate=ch.p'
-        #        - id: cookie_route
-        #          uri: https://www.baidu.com
-        #          predicates:
-        #            - Cookie=chocolcate, ch.p
+        - id: cookie_route
+          uri: https://www.baidu.com
+          predicates:
+            - Cookie=chocolcate, ch.p
 
         #通过时间匹配
         #Between Route Predicate Factory有两个参数，datetime1和datetime2。该谓词匹配在datetime1之后和datetime2之前发生的请求。datetime2参数必须在datetime1之后
         #匹配2017年1月20日山区时间（丹佛）之后和2017年1月21日17:42山区时间（丹佛）之后的所有请求。这对于维护时段可能很有用
-        #        - id: between_route
-        #          uri: https://www.baidu.com
-        #          predicates:
-        #            - Between=2018-01-20T06:06:06+08:00[Asia/Shanghai], 2020-01-20T06:06:06+08:00[Asia/Shanghai]
+        - id: between_route
+          uri: https://www.baidu.com
+          predicates:
+            - Between=2018-01-20T06:06:06+08:00[Asia/Shanghai], 2020-01-20T06:06:06+08:00[Asia/Shanghai]
 
-        #Before Route Predicate Factory采用一个参数，即日期时间。该predicate匹配当前日期时间之前发生的请求,匹配2017年1月20日17:42山区时间（丹佛）之前的所有请求
-        #        - id: before_route
-        #          uri: https://www.baidu.com
-        #          predicates:
-        #            - Before=2018-01-20T06:06:06+08:00[Asia/Shanghai]
+        #Before Route Predicate Factory采用一个参数，即日期时间。该predicate匹配当前日期时间之前发生的请求,匹配2018-01-20T06:06:06+08:00[Asia/Shanghai]之前的所有请求
+        - id: before_route
+          uri: https://www.baidu.com
+          predicates:
+            - Before=2018-01-20T06:06:06+08:00[Asia/Shanghai]
 
-        #After Route Predicate Factory采用一个参数，即日期时间。该predicate匹配在当前日期时间之后发生的请求,匹配2017年1月20日17:42山区时间（丹佛）之后的所有请求
-        #        - id: after_route
-        #          uri: https://www.baidu.com
-        #          predicates:
-        #            - After=2018-01-20T06:06:06+08:00[Asia/Shanghai]
+        #After Route Predicate Factory采用一个参数，即日期时间。该predicate匹配在当前日期时间之后发生的请求,匹配2018-01-20T06:06:06+08:00[Asia/Shanghai]之后的所有请求
+        - id: after_route
+          uri: https://www.baidu.com
+          predicates:
+            - After=2018-01-20T06:06:06+08:00[Asia/Shanghai]
 
 
       #是否与服务注册于发现组件进行结合，通过 serviceId 转发到具体的服务实例。默认为 false，设为 true 便开启通过服务中心的自动根据 serviceId 创建路由的功能
@@ -133,6 +222,21 @@ spring:
       default-filters:
         - Elapsed=true
       enabled: false
+      filter:
+        request-rate-limiter:
+          deny-empty-key: true
+          empty-key-status-code: 403
+      loadbalancer:
+        use404: true
+      metrics:
+        enabled: true
+      #网关路由可以路由到HTTP和HTTPS后端。如果路由到HTTPS后端，则可以将网关配置为信任所有具有证书的下游服务
+      httpclient:
+        ssl:
+          use-insecure-trust-manager: true
+          trusted-x509-certificates:
+            - cert1.pem
+            - cert2.pem
   redis:
     host: localhost
     port: 6379
@@ -141,13 +245,30 @@ spring:
 
 server:
   port: 8080
+  ssl:
+    enabled: true
+    key-alias: scg
+    key-store-password: scg1234
+    key-store:
+      classpath: scg-keystore.p12
+    key-store-type: PKCS12
 logging:
   level:
     org.springframework.cloud.gateway: debug
 
 
+hystrix:
+  command:
+    fetchIngredients:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
 management:
   endpoints:
     web:
       exposure:
         include: *
+  endpoint:
+    gateway:
+      enabled: true

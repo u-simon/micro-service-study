@@ -6,13 +6,10 @@
         <groupId>com.simon.microservice</groupId>
         <artifactId>micro-service-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.simon.microservice</groupId>
     <artifactId>micro-service-gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>micro-service-gateway</name>
-    <description>Demo project for Spring Boot</description>
 
     <properties>
         <!-- <java.version>1.8</java.version>-->
@@ -50,7 +47,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.20</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -65,6 +61,11 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator</artifactId>
         </dependency>
     </dependencies>
 
