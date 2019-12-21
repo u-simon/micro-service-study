@@ -1,9 +1,8 @@
 package com.simon.microservce.hystrix;
 
-import com.netflix.hystrix.HystrixRequestCache;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
-
 import java.util.concurrent.Future;
+
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 
 /**
  * @author fengyue
@@ -35,6 +34,7 @@ public class Test {
         System.out.println(future1.get() + " ----- " + future2.get());
 
         initializeContext.shutdown();
+
     }
 }
 
