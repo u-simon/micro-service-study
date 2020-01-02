@@ -14,17 +14,21 @@ public class MyHystrixCommand extends HystrixCommand<String> {
 	private final String name;
 
 	public MyHystrixCommand(String name) {
-		super(HystrixCommandGroupKey.Factory.asKey("MyGroup"));
-		// super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("MyGroup"))
-		// .andCommandPropertiesDefaults(
-		// HystrixCommandProperties.Setter().withExecutionIsolationStrategy(
-		// HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE)));
-		// super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("MyGroup"))
-		// .andCommandPropertiesDefaults(
-		// HystrixCommandProperties.Setter().withExecutionIsolationStrategy(
-		// HystrixCommandProperties.ExecutionIsolationStrategy.THREAD))
-		// .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()
-		// .withCoreSize(10).withMaxQueueSize(100).withMaximumSize(100)));
+//		super(HystrixCommandGroupKey.Factory.asKey("MyGroup"));
+
+		//Semaphore
+//		super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("MyGroup"))
+//				.andCommandPropertiesDefaults(
+//						HystrixCommandProperties.Setter().withExecutionIsolationStrategy(
+//								HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE)));
+
+		//Thread
+		super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("MyGroup"))
+				.andCommandPropertiesDefaults(
+						HystrixCommandProperties.Setter().withExecutionIsolationStrategy(
+								HystrixCommandProperties.ExecutionIsolationStrategy.THREAD))
+				.andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()
+						.withCoreSize(10).withMaxQueueSize(100).withMaximumSize(100)));
 		this.name = name;
 	}
 
