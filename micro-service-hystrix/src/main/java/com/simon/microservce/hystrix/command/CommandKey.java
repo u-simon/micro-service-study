@@ -76,6 +76,7 @@ public class CommandKey {
      *          1.circuitBreaker.enabled 是否启动熔断器,默认是true
      *          2.circuitBreaker.forceOpen 熔断器强制打开,始终保持打开状态,不关注熔断开关的实际状态,默认值false
      *          3.circuitBreaker.forceClosed 熔断器强制关闭,始终保持关闭状态,不关注熔断开关的实际状态,默认值为false
+     *                              此外不必关注熔断器实际状态，也就是说熔断器仍然会维护统计数据和开关状态，只是不生效而已
      *          4.circuitBreaker.errorThresholdPercentage 错误率,默认是50%,例如一段时间内(10s)有100个请求,其中有54个异常或者超时,那么这段时间内的错误率是54%
      *                              大于了默认值50%,这种情况下会触发熔断器打开
      *          5.circuitBreaker.requestVolumeThreshold 默认值20,含义是一段时间内至少有20个请求才进行errorThresholdPercentage计算,比如一段时间有了19个请求,
