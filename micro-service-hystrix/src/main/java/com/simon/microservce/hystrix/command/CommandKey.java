@@ -1,9 +1,6 @@
 package com.simon.microservce.hystrix.command;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandKey;
-import com.netflix.hystrix.HystrixThreadPoolKey;
+import com.netflix.hystrix.*;
 
 /**
  * @author simon
@@ -39,7 +36,84 @@ public class CommandKey {
      *
      */
 
+    /**
+     * Hystrix容错
+     *  Hystrix容错主要是通过添加容许延迟和容错方法,帮助控制这些分布式服务之间的交互,还通过隔离服务之间的访问点,阻止他们之间的级联故障
+     *  以及提供回退选项来实现这一点,从而提高系统的整体弹性,Hystrix主要提供了以下几种容错方法:
+     *      -> 资源隔离
+     *      -> 熔断
+     *      -> 降级
+     *   资源隔离
+     *      -> 资源隔离主要是针对线程的隔离,Hystrix提供了两种线程隔离方式:线程池和信号量
+     *      线程隔离-线程池
+     *          -> Hystrix通过命令模式对发送请求的对象和执行请求的对象进行解耦,将不同类型的业务请求封装为对应的命令请求,通过将发送请求与执行请求
+     *             的线程分离,可有效防止发生级联故障,当线程池或请求队列饱和时,Hystrix将拒绝服务,使得请求线程可以快速失败,从而避免依赖问题扩散
+     *          -> 优点
+     *              1.保护应用程序以免受来自依赖故障的影响,指定依赖现场池饱和不会影响应用程序的其余部分
+     *              2.当引入新客户端lib时,即使发生问题,也是在本lib中,并不会影响到其他内容
+     *              3.当依赖从故障恢复正常时,应用程序会立即恢复正常的性能
+     *              4.当以能用程序一些配置参数错误时,线程池的运行状况会很快检测到这一点,同时可以通过动态属性进行实时纠正错误的参数配置
+     *              5.如果服务的性能有变化,需要实时调整,比如增加或减少超时时间,更爱重试次数,可以通过线程池指标动态属性修改,而不会影响到其他调用请求
+     *              6.除了隔离优势外,Hystrix拥有专门的线程池可提供内置的并发功能,使得可以在同步调用之上构建异步门面(外观模式),为异步编程提供了支持
+     *              注意: 尽管线程池提供了线程隔离,我们的客户端底层代码也必须要有超时设置或响应线程中断,不能无限制的阻塞以至线程池一直饱和
+     *          -> 缺点
+     *              1.线程池的主要缺点就是增加了计算开销,每个命令的执行都在单独的线程完成,增加了排队、调度和上下文切换的开销,因此,要使用Hystrix,就必须
+     *              接受他带来的开销,以换取他所提供的好处
+     *         通常情况下,线程池引入的开销足够小,不会有重大的成本或性能影响,但对于一些访问延迟极低的服务,如只依赖内存缓存,线程池引入的开销就比较明显了,
+     *         这时候使用线程池隔离技术就不适合了,我们需要考虑更轻量级的方式,如信号量
+     *
+     *      线程隔离-信号量
+     *          -> 当依赖延迟极低的服务时,线程池隔离技术引入的开销超过了他带来的好处,这时候可以使用信号量隔离技术来代替,通过设置信号量来限制对任何给定
+     *              依赖的并发调用量
+     *          -> 使用线程池时,发送请求的线程和执行依赖服务的线程不是同一个,而使用信号量时，发送请求的线程和执行依赖服务的线程是同一个,都是发起请求
+     *              的线程
+     *           由于Hystrix默认使用线程池做线程隔离,使用信号量隔离需要显示地将属性execution.isolation.strategy设置为 ExecutionIsolationStrategy.SEMAPHORE
+     *           ,同时配置信号量个数为10,客户端需向依赖服务发起请求时,需要获取一个信号量才能真正发起调用,由于信号量的数量有限,当并发请求量超过信号量个数时,后续的
+     *           请求都会直接拒绝,进入fallback流程
+     *           线程隔离主要是通过控制并发请求量,防止请求线程大面积阻塞,从而达到限流和防止雪崩的目的
+     *  熔断
+     *      配置
+     *          1.circuitBreaker.enabled 是否启动熔断器,默认是true
+     *          2.circuitBreaker.forceOpen 熔断器强制打开,始终保持打开状态,不关注熔断开关的实际状态,默认值false
+     *          3.circuitBreaker.forceClosed 熔断器强制关闭,始终保持关闭状态,不关注熔断开关的实际状态,默认值为false
+     *          4.circuitBreaker.errorThresholdPercentage 错误率,默认是50%,例如一段时间内(10s)有100个请求,其中有54个异常或者超时,那么这段时间内的错误率是54%
+     *                              大于了默认值50%,这种情况下会触发熔断器打开
+     *          5.circuitBreaker.requestVolumeThreshold 默认值20,含义是一段时间内至少有20个请求才进行errorThresholdPercentage计算,比如一段时间有了19个请求,
+     *                              且请求全部失败了,错误率是100%,但熔断器不会打开,总请求数不满足20
+     *          6.circuitBreaker.sleepWindowInMilliseconds 半开状态试探睡眠时间,默认是5000ms,比如当熔断器开启5000ms之后,会尝试放过去一部分流量进行试探,确定
+     *                              依赖服务是否恢复
+     *
+     */
 
+    /**
+     * 信号量示例
+     */
+    public class QueryByOrderIdCommandSemaphore extends HystrixCommand<Integer> {
+
+        private String name;
+        public QueryByOrderIdCommandSemaphore(String name) {
+            super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("orderService"))
+                    .andCommandKey(HystrixCommandKey.Factory.asKey("queryByOrderId"))
+                    .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
+                            .withCircuitBreakerRequestVolumeThreshold(10)////至少有10个请求，熔断器才进行错误率的计算
+                            .withCircuitBreakerSleepWindowInMilliseconds(5000)//熔断器中断请求5秒后会进入半打开状态,放部分流量过去重试
+                            .withCircuitBreakerErrorThresholdPercentage(50)//错误率达到50开启熔断保护
+                            .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE)
+                            .withExecutionIsolationSemaphoreMaxConcurrentRequests(10)));//最大并发请求量
+            this.name = name;
+        }
+
+        @Override
+        protected Integer run() {
+            //实际执行
+            return 0;
+        }
+
+        @Override
+        protected Integer getFallback() {
+            return -1;
+        }
+    }
 
     /**
      * 命令名称
