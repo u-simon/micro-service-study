@@ -14,10 +14,11 @@ eureka:
   instance:
     hostname: eureka9001.com
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    #    集群版需要取掉
+    #    register-with-eureka: false
+    #    fetch-registry: false
     service-url:
-#      defaultZone: http://simon:sion@eureka9001.com:9001/eureka
+      #      defaultZone: http://simon:sion@eureka9001.com:9001/eureka
       defaultZone: http://simon:sion@eureka9002.com:9002/eureka/,http://simon:simon@eureka9003.com:9003/eureka/
 management:
   endpoints:
