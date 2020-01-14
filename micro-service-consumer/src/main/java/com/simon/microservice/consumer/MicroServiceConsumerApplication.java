@@ -34,9 +34,9 @@ public class MicroServiceConsumerApplication {
 
 	DiscoveryClient discoveryClient;
 
-	public String serviceUrl1(){
+	public String serviceUrl1() {
 		List<InstanceInfo> stores = discoveryClient.getInstancesById("stores");
-		if (stores != null && stores.size() > 0){
+		if (stores != null && stores.size() > 0) {
 			return stores.get(0).getIPAddr();
 		}
 		return null;
