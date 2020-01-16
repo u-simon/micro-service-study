@@ -1,6 +1,7 @@
 package com.simon.microservce.hystrix.masterslave;
 
-import com.netflix.config.ConfigurationManager;
+import static com.netflix.config.ConfigurationManager.getConfigInstance;
+
 import com.netflix.config.DynamicBooleanProperty;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.hystrix.*;
@@ -89,9 +90,9 @@ public class FacadeWithMasterSlaveCommand extends HystrixCommand<String> {
 
     public static void main(String[] args) {
         HystrixRequestContext hystrixRequestContext = HystrixRequestContext.initializeContext();
-        ConfigurationManager.getConfigInstance().setProperty("masterSlave.usePrimary", true);
+        getConfigInstance().setProperty("masterSlave.usePrimary", true);
         System.out.println(new FacadeWithMasterSlaveCommand(20).execute());
-        ConfigurationManager.getConfigInstance().setProperty("masterSlave.usePrimary", false);
+        getConfigInstance().setProperty("masterSlave.usePrimary", false);
         System.out.println(new FacadeWithMasterSlaveCommand(20).execute());
         hystrixRequestContext.shutdown();
     }
