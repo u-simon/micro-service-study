@@ -28,6 +28,10 @@
         <module>micro-service-gateway</module>
         <module>micro-service-webflux</module>
         <module>micro-service-hystrix</module>
+        <module>micro-service-zipkin</module>
+        <module>micro-service-zookeeper</module>
+        <module>micro-service-zuul</module>
+        <module>micro-service-jwt</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>
