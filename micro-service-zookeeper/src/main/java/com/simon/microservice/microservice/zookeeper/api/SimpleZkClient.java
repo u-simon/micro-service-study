@@ -16,7 +16,7 @@ public class SimpleZkClient {
 
     public static void main(String[] args) throws IOException {
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        ZooKeeper zooKeeper = new ZooKeeper("127.0.0.1:2181", 5000, new Watcher() {
+        ZooKeeper zooKeeper = new ZooKeeper("39.100.121.226:2181", 5000, new Watcher() {
             @Override
             public void process(WatchedEvent watchedEvent) {
                 System.out.println("receive watched event : " + watchedEvent);

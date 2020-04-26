@@ -28,6 +28,7 @@
         <module>micro-service-gateway</module>
         <module>micro-service-webflux</module>
         <module>micro-service-hystrix</module>
+        <module>micro-service-mq</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>
