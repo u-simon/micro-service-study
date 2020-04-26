@@ -7,7 +7,6 @@
         <artifactId>micro-service-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>com.simon.microservice</groupId>
     <artifactId>micro-service-zuul</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>micro-service-zuul</name>
