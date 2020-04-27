@@ -7,6 +7,7 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 /**
  * 同步发送
+ * 		可靠同步发送在众多场景中被使用,例如重要的通知消息,短信通知,短信营销系统
  * 
  * @author simon
  * @date 2020/4/26 14:21
@@ -16,11 +17,9 @@ public class SyncProducer {
 
 	public static void main(String[] args) throws Exception {
 		DefaultMQProducer producer = new DefaultMQProducer("ProducerGroupName");
-
 		producer.setNamesrvAddr("localhost:9876");
 		producer.setCreateTopicKey("topicTest");
 		producer.start();
-
 		for (int i = 0; i < 100; i++) {
 			SendResult send = producer.send(new Message("TopicTest", "TagA",
 					("hello rocket" + i).getBytes(RemotingHelper.DEFAULT_CHARSET)));

@@ -11,6 +11,7 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * 异步发送消息
+ * 	异步发送通常被用于相应时间敏感的业务场景
  *
  * @author simon
  * @date 2020/4/26 16:50

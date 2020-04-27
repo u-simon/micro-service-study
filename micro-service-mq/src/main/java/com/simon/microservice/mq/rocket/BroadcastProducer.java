@@ -7,6 +7,7 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 /**
  * 广播模式
  *
+ * 	广播就是向一个主题的所有订阅者发送同一条消息，如果你想让一个主题的所有订阅者收到消息，广播是一个很好的选择
  * @Author simon
  * @Date 2020/4/27 2:18 下午
  */

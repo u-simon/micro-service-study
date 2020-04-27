@@ -11,9 +11,10 @@ import java.util.List;
 
 /**
  * 顺序消息
+ *  RocketMq 提供使用先进先出算法的顺序消息实现
  * 
- * @Author simon
- * @Date 2020/4/27 11:40 上午
+ * @author simon
+ * @date 2020/4/27 11:40 上午
  */
 public class OrderedProducer {
 	public static void main(String[] args) throws Exception {

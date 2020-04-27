@@ -6,6 +6,7 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 /**
  * 单向发送
+ * 	单项发送用于要求一定可靠性的场景,例如 日志收集
  *
  * @author simon
  * @date 2020/4/26 17:17
