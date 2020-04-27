@@ -30,9 +30,11 @@
         <module>micro-service-hystrix</module>
         <module>micro-service-zipkin</module>
         <module>micro-service-zookeeper</module>
-        <module>micro-service-zuul</module>
         <module>micro-service-jwt</module>
         <module>micro-service-mq</module>
+        <module>micro-service-elasticsearch</module>
+        <module>micro-service-job</module>
+        <module>micro-service-ribbon</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>
