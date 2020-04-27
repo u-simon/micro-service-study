@@ -5,6 +5,8 @@ import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 /**
+ * 单向发送
+ *
  * @author simon
  * @date 2020/4/26 17:17
  * @describe 倾我一生一世念, 来似飞花散似烟

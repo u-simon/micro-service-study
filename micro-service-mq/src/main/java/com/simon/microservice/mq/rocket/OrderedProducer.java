@@ -10,6 +10,8 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 import java.util.List;
 
 /**
+ * 顺序消息
+ * 
  * @Author simon
  * @Date 2020/4/27 11:40 上午
  */

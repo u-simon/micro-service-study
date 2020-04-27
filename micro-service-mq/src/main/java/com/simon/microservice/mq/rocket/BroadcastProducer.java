@@ -5,6 +5,8 @@ import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 /**
+ * 广播模式
+ *
  * @Author simon
  * @Date 2020/4/27 2:18 下午
  */
