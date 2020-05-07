@@ -35,6 +35,7 @@
         <module>micro-service-elasticsearch</module>
         <module>micro-service-job</module>
         <module>micro-service-ribbon</module>
+        <module>micro-service-httpclient</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>

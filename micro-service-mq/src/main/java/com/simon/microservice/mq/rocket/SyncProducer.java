@@ -16,11 +16,13 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 public class SyncProducer {
 
 	public static void main(String[] args) throws Exception {
+		// 创建producer 并且指定GroupName
 		DefaultMQProducer producer = new DefaultMQProducer("ProducerGroupName");
+		// 绑定 namesrvAddr
 		producer.setNamesrvAddr("localhost:9876");
-		producer.setCreateTopicKey("topicTest");
 		producer.start();
 		for (int i = 0; i < 100; i++) {
+			// 发送消息
 			SendResult send = producer.send(new Message("TopicTest", "TagA",
 					("hello rocket" + i).getBytes(RemotingHelper.DEFAULT_CHARSET)));
 			System.out.println(send);
