@@ -9,7 +9,6 @@
     </parent>
     <artifactId>micro-service-mq</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>micro-service-mq</name>
 
     <properties>
         <java.version>1.8</java.version>
